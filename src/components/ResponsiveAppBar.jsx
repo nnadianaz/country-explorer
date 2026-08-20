@@ -1,160 +1,67 @@
 import { useState } from "react";
-import {
-  AppBar,
-  Box,
-  Button,
-  Container,
-  IconButton,
-  Menu,
-  MenuItem,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+import "./ResponsiveAppBar.css";
 
-const pages = ["Explore", "Map", "Cultures", "My Journey"];
-const settings = ["Profile", "Dashboard", "Logout"];
+const pages = [
+  { name: "Explore", link: "#explore" },
+  { name: "World Map", link: "#world" },
+  { name: "Discover", link: "#country-detail" },
+];
+
+const CompassMark = () => (
+  <span className="compass-mark" aria-hidden="true">
+    <span />
+  </span>
+);
 
 const ResponsiveAppBar = () => {
-  const [anchorElNav, setAnchorElNav] = useState(null);
-  const [anchorElUser, setAnchorElUser] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
+  const handleExplore = () => {
+    document
+      .getElementById("explore")
+      ?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <AppBar
-      position="static"
-      sx={{
-        backgroundColor: "#06182f",
-        boxShadow: "none",
-        borderBottom: "1px solid rgba(255,255,255,0.12)",
-      }}
-    >
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          {/* Mobile menu button */}
-          <IconButton
-            onClick={handleOpenNavMenu}
-            color="inherit"
-            sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
+    <header className="topbar">
+      <a href="#top" className="brand" aria-label="Atlas home">
+        <CompassMark />
+        <span>ATLAS</span>
+        <small>Country Explorer</small>
+      </a>
+
+      <nav
+        id="primary-navigation"
+        className={`nav-links ${mobileMenuOpen ? "nav-open" : ""}`}
+        aria-label="Primary navigation"
+      >
+        {pages.map((page) => (
+          <a
+            key={page.name}
+            href={page.link}
+            onClick={() => setMobileMenuOpen(false)}
           >
-            {/* <MenuIcon /> */}
-          </IconButton>
+            {page.name}
+          </a>
+        ))}
+      </nav>
 
-          <Menu
-            id="navigation-menu"
-            anchorEl={anchorElNav}
-            open={Boolean(anchorElNav)}
-            onClose={handleCloseNavMenu}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "left",
-            }}
-          >
-            {pages.map((page) => (
-              <MenuItem key={page} onClick={handleCloseNavMenu}>
-                {page}
-              </MenuItem>
-            ))}
-          </Menu>
+      <button type="button" className="journey-button" onClick={handleExplore}>
+        Start exploring <span aria-hidden="true">↗</span>
+      </button>
 
-          {/* Logo and title */}
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              flexGrow: { xs: 1, md: 0 },
-              mr: { md: 5 },
-            }}
-          >
-
-            <Typography
-              variant="h6"
-              noWrap
-              sx={{
-                fontFamily: "Georgia, serif",
-                fontWeight: 700,
-                color: "white",
-              }}
-            >
-              Country{" "}
-              <Box component="span" sx={{ color: "#20d8c7" }}>
-                Explorer
-              </Box>
-            </Typography>
-          </Box>
-
-          {/* Desktop navigation */}
-          <Box
-            sx={{
-              flexGrow: 1,
-              justifyContent: "center",
-              display: { xs: "none", md: "flex" },
-            }}
-          >
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{
-                  mx: 1,
-                  px: 2,
-                  py: 2.5,
-                  color: page === "Map" ? "#20d8c7" : "white",
-                  borderRadius: 0,
-                  borderBottom:
-                    page === "Map"
-                      ? "2px solid #20d8c7"
-                      : "2px solid transparent",
-                  textTransform: "none",
-                }}
-              >
-                {page}
-              </Button>
-            ))}
-          </Box>
-
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-            }}
-          >
-
-            <Menu
-              id="user-menu"
-              anchorEl={anchorElUser}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "right",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  {setting}
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-        </Toolbar>
-      </Container>
-    </AppBar>
+      <button
+        type="button"
+        className={`menu-button ${mobileMenuOpen ? "menu-open" : ""}`}
+        aria-label={mobileMenuOpen ? "Close navigation" : "Open navigation"}
+        aria-controls="primary-navigation"
+        aria-expanded={mobileMenuOpen}
+        onClick={() => setMobileMenuOpen((isOpen) => !isOpen)}
+      >
+        <span />
+        <span />
+      </button>
+    </header>
   );
 };
 

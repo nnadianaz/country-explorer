@@ -1,99 +1,124 @@
-import {
-  Box,
-  Divider,
-  IconButton,
-  Stack,
-  Typography,
-} from "@mui/material";
+import "./CountryDetail.css";
 
-import CloseIcon from "@mui/icons-material/Close";
+const makeArray = (value) => {
+  if (Array.isArray(value)) return value;
+
+  if (value && typeof value === "object") {
+    return Object.values(value);
+  }
+
+  return [];
+};
 
 const CountryDetail = ({ country, onClose }) => {
   if (!country) {
     return (
-      <Typography sx={{ color: "#b5c5d4", textAlign: "center", mt: 4 }}>
-        Select a country card to see its details.
-      </Typography>
+      <div className="detail-card detail-empty">
+        <span className="detail-empty-globe" aria-hidden="true">🌍</span>
+        <h3>Select a country</h3>
+        <p>Choose a country card to discover its information.</p>
+      </div>
     );
   }
 
-  const currencies =
-    country.currencies
-      ?.map((currency) => currency.name)
-      .join(", ") || "Not available";
+  const currencies = makeArray(country.currencies)
+    .map((currency) => currency?.name || currency?.code)
+    .filter(Boolean)
+    .join(", ");
 
-  const languages =
-    country.languages
-      ?.map((language) => language.name)
-      .join(", ") || "Not available";
+  const languages = makeArray(country.languages)
+    .map((language) => language?.name || language)
+    .filter(Boolean)
+    .join(", ");
 
-  const borders =
-    country.borders?.length > 0
-      ? country.borders.join(", ")
-      : "No neighboring countries";
+  const borders = country.borders || [];
+  const flag = country.flags?.svg || country.flags?.png;
+  const population = country.population
+    ? new Intl.NumberFormat("en").format(country.population)
+    : "Not available";
+
+  const handleDiscoverAnother = () => {
+    document
+      .getElementById("top")
+      ?.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
-    <Box>
-      {/* Heading */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 2,
-        }}
-      >
-        <Typography variant="h4" sx={{ color: "white", fontWeight: 700 }}>
-          {country.name}
-        </Typography>
+    <div className="detail-card">
+      <div className="detail-flag">
+        {flag ? (
+          <img src={flag} alt={`${country.name} flag`} />
+        ) : (
+          <span className="detail-flag-placeholder" aria-hidden="true">
+            🌐
+          </span>
+        )}
 
-        <IconButton onClick={onClose} sx={{ color: "white" }}>
-          <CloseIcon />
-        </IconButton>
-      </Box>
+        <button
+          type="button"
+          className="detail-close"
+          aria-label="Close country details"
+          onClick={onClose}
+        >
+          ×
+        </button>
+      </div>
 
-      {/* Flag */}
-      <Box
-        component="img"
-        src={country.flags.svg}
-        alt={`${country.name} flag`}
-        sx={{
-          width: "100%",
-          height: 180,
-          objectFit: "contain",
-          backgroundColor: "white",
-          borderRadius: 2,
-          mb: 2,
-        }}
-      />
+      <div className="detail-body">
+        <div className="detail-heading">
+          <div>
+            <span>{country.region || "Country profile"}</span>
+            <h3>{country.name}</h3>
+          </div>
 
-      <Divider sx={{ borderColor: "#29445b", mb: 2 }} />
+          <span className="country-code">{country.alpha3Code}</span>
+        </div>
 
-      {/* Information */}
-      <Stack spacing={2}>
-        <Typography sx={{ color: "white" }}>
-          <strong>Capital:</strong>{" "}
-          {country.capital}
-        </Typography>
+        <div className="detail-facts">
+          <div>
+            <span>Capital</span>
+            <strong>{country.capital || "Not available"}</strong>
+          </div>
 
-        <Typography sx={{ color: "white" }}>
-          <strong>Population:</strong>{" "}
-          {country.population}
-        </Typography>
+          <div>
+            <span>Population</span>
+            <strong>{population}</strong>
+          </div>
 
-        <Typography sx={{ color: "white" }}>
-          <strong>Currency:</strong> {currencies}
-        </Typography>
+          <div>
+            <span>Currency</span>
+            <strong>{currencies || "Not available"}</strong>
+          </div>
 
-        <Typography sx={{ color: "white" }}>
-          <strong>Languages:</strong> {languages}
-        </Typography>
+          <div>
+            <span>Languages</span>
+            <strong>{languages || "Not available"}</strong>
+          </div>
+        </div>
 
-        <Typography sx={{ color: "white" }}>
-          <strong>Neighbors:</strong> {borders}
-        </Typography>
-      </Stack>
-    </Box>
+        <div className="neighbor-block">
+          <span>Neighbouring countries</span>
+
+          <div>
+            {borders.length ? (
+              borders.slice(0, 8).map((border) => (
+                <i key={border}>{border}</i>
+              ))
+            ) : (
+              <small>No land borders—an island story.</small>
+            )}
+          </div>
+        </div>
+
+        <button
+          type="button"
+          className="detail-cta"
+          onClick={handleDiscoverAnother}
+        >
+          Discover another country <span aria-hidden="true">↗</span>
+        </button>
+      </div>
+    </div>
   );
 };
 

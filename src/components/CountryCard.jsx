@@ -1,56 +1,55 @@
-import {
-  Card,
-  CardActionArea,
-  CardMedia,
-  CardContent,
-  Typography,
-} from "@mui/material";
+import "./CountryCard.css";
 
-const CountryCard = ({ country, onSelectCountry }) => {
-  const handleClick = () => {
-    onSelectCountry(country);
-  };
+const CountryCard = ({
+  country,
+  onSelectCountry,
+  isSelected,
+  style,
+}) => {
+  const flag = country.flags?.svg || country.flags?.png;
 
   return (
-    <Card
-      onClick={handleClick}
-      sx={{
-        backgroundColor: "#10263b",
-        color: "white",
-        border: "1px solid #29445b",
-        borderRadius: 2,
-        overflow: "hidden",
-        transition: "0.3s",
-        "&:hover": {
-          borderColor: "#20d8c7",
-          transform: "translateY(-4px)",
-        },
-      }}
+    <button
+      type="button"
+      style={style}
+      className={`country-card ${isSelected ? "selected" : ""}`}
+      aria-pressed={isSelected}
+      onClick={() => onSelectCountry(country)}
     >
-      <CardActionArea>
-        <CardMedia
-          component="img"
-          height="160"
-          image={country.flags.svg}
-          alt={`${country.name} flag`}
-          sx={{
-            objectFit: "cover",
-          }}
-        />
+      <span className="flag-stage">
+        {flag ? (
+          <img
+            src={flag}
+            alt={`${country.name} flag`}
+            loading="lazy"
+          />
+        ) : (
+          <span className="flag-placeholder" aria-hidden="true">
+            🌐
+          </span>
+        )}
+      </span>
 
-        <CardContent>
-          <Typography variant="h5" fontWeight={700}>
-            {country.name}
-          </Typography>
+      <span className="card-topline">
+        <span>{country.region || "Around the world"}</span>
+      </span>
 
-          <Typography variant="body2" sx={{ color: "#b5c5d4" }}>
-            Capital: {country.capital}
-          </Typography>
-        </CardContent>
-      </CardActionArea>
-    </Card>
+      <strong>{country.name}</strong>
+
+      <span className="capital-line">
+        <i aria-hidden="true" />
+        {country.capital || "Capital not available"}
+      </span>
+
+      <span className="card-footer">
+        <span>{country.population || "Not available"}</span>
+
+        <b>
+          View <span aria-hidden="true">→</span>
+        </b>
+      </span>
+    </button>
   );
 };
 
 export default CountryCard;
-';'

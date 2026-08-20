@@ -1,0 +1,136 @@
+.country-card {
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+  color: var(--ink, #17152e);
+  text-align: left;
+  background: var(--paper, #fffdf8);
+  border: 1px solid var(--line, rgba(36, 32, 68, 0.12));
+  border-radius: 17px;
+  cursor: pointer;
+  animation: reveal-card 0.45s ease both;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.country-card:hover,
+.country-card.selected {
+  border-color: rgba(255, 116, 87, 0.6);
+  box-shadow: 0 17px 40px rgba(32, 28, 55, 0.1);
+  transform: translateY(-5px);
+}
+
+.flag-stage {
+  display: grid;
+  height: 130px;
+  overflow: hidden;
+  place-items: center;
+  background: linear-gradient(145deg, #ebe5db, #f8f5ee);
+  border-bottom: 1px solid var(--line, rgba(36, 32, 68, 0.12));
+}
+
+.flag-stage img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.45s ease;
+}
+
+.country-card:hover .flag-stage img {
+  transform: scale(1.04);
+}
+
+.flag-placeholder {
+  font-size: 3rem;
+}
+
+.card-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 17px 0;
+  color: #918b82;
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.country-card > strong {
+  display: block;
+  padding: 7px 17px 5px;
+  font-family: Georgia, serif;
+  font-size: 25px;
+  font-weight: 400;
+  letter-spacing: -0.025em;
+}
+
+.capital-line {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 17px 17px;
+  color: var(--muted, #6f6b7a);
+  font-size: 11px;
+}
+
+.capital-line i {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+  background: var(--mint, #71d5b4);
+  border-radius: 50%;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 17px;
+  padding: 12px 0 14px;
+  color: #99938a;
+  font-size: 9px;
+  border-top: 1px solid var(--line, rgba(36, 32, 68, 0.12));
+}
+
+.card-footer b {
+  color: var(--ink, #17152e);
+  font-size: 8px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.card-footer b span {
+  margin-left: 3px;
+  color: var(--coral, #ff7457);
+  font-size: 13px;
+}
+
+@keyframes reveal-card {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 580px) {
+  .flag-stage {
+    height: 165px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .country-card,
+  .flag-stage img {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,39 +1,44 @@
-import { Box, Typography } from "@mui/material"
-import CountryCard from "./CountryCard"
+import CountryCard from "./CountryCard";
+import "./CountryList.css";
 
-const CountryList = ({countries, onSelectCountry}) => {
+const CountryList = ({
+  countries,
+  onSelectCountry,
+  selectedCountryCode,
+  loading,
+}) => {
+  if (loading) {
+    return (
+      <div className="loading-state" role="status" aria-live="polite">
+        <span className="loading-spinner" aria-hidden="true" />
+        Loading countries...
+      </div>
+    );
+  }
+
+  if (!countries.length) {
+    return (
+      <div className="empty-state">
+        <span aria-hidden="true">⌕</span>
+        <h3>No countries found</h3>
+        <p>Try searching with another country name.</p>
+      </div>
+    );
+  }
+
   return (
-    <Box sx={{ marginTop: 2 }}>
-      <Typography
-        variant="h6"
-        sx={{
-          color: "white",
-          marginBottom: 2,
-        }}
-      >
-        Featured Destinations
-      </Typography>
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: {
-            xs: "1fr",
-            sm: "repeat(2, 1fr)",
-            lg: "repeat(4, 1fr)",
-          },
-          gap: 2,
-        }}
-      >
-        {countries.map((country) => (
-          <CountryCard
-            key={country.alpha3Code}
-            country={country}
-            onSelectCountry={onSelectCountry}
-          />
-        ))}
-      </Box>
-    </Box>
-  )
-}
+    <div className="country-grid">
+      {countries.map((country, index) => (
+        <CountryCard
+          key={country.alpha3Code}
+          country={country}
+          onSelectCountry={onSelectCountry}
+          isSelected={selectedCountryCode === country.alpha3Code}
+          style={{ animationDelay: `${index * 50}ms` }}
+        />
+      ))}
+    </div>
+  );
+};
 
-export default CountryList
+export default CountryList;

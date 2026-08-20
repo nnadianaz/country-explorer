@@ -1,19 +1,13 @@
-
-
-import './App.css'
-import Dashboard from './components/Dashboard'
-import ResponsiveAppBar from './components/ResponsiveAppBar'
-
+import Dashboard from "./components/Dashboard";
+import ResponsiveAppBar from "./components/ResponsiveAppBar";
 
 function App() {
-
   return (
     <>
       <ResponsiveAppBar/>
-      <Dashboard/>
-   
+      <Dashboard />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
