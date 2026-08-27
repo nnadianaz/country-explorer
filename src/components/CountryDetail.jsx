@@ -8,13 +8,29 @@ const makeArray = (value) => {
   return [];
 };
 
+// converts different API formats into an array
+// because
+
 const cardStyles = `
-  relative top-auto overflow-hidden rounded-[21px]
-  bg-[#17152e] text-white
-  shadow-[0_25px_60px_rgba(25,22,47,0.18)]
-  scroll-mt-6
-  min-[821px]:sticky min-[821px]:top-5
-`;
+                relative
+                top-auto
+                overflow-hidden
+
+              rounded-[21px]
+
+              border
+              border-white/10
+
+              bg-[#17152e]
+              text-white
+
+                shadow-[0_25px_60px_rgba(25,22,47,0.18)]
+
+                scroll-mt-[96px]
+
+                min-[1200px]:origin-top
+                min-[1200px]:scale-90
+              `;
 
 const focusStyles = `
   focus-visible:outline
@@ -74,9 +90,7 @@ const CountryDetail = ({ country, onClose }) => {
     : "Not available";
 
   const handleDiscoverAnother = () => {
-    document
-      .getElementById("top")
-      ?.scrollIntoView({ behavior: "smooth" });
+    document.getElementById("top")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -109,10 +123,7 @@ const CountryDetail = ({ country, onClose }) => {
             className="h-full w-full object-cover"
           />
         ) : (
-          <span
-            aria-hidden="true"
-            className="text-[5rem]"
-          >
+          <span aria-hidden="true" className="text-[5rem]">
             🌐
           </span>
         )}
@@ -122,17 +133,39 @@ const CountryDetail = ({ country, onClose }) => {
           aria-label="Close country details"
           onClick={onClose}
           className={`
-            absolute right-3.5 top-3.5 z-[5]
-            grid h-[34px] w-[34px] cursor-pointer
-            place-items-center rounded-full
-            border border-white/35 bg-[rgba(23,21,46,0.75)]
-            p-0 text-xl leading-none text-white
-            backdrop-blur-lg
-            transition duration-200 ease-[ease]
-            hover:border-[#ff7457] hover:bg-[#ff7457]
-            motion-reduce:transition-none
-            ${focusStyles}
-          `}
+              absolute
+              right-3.5 top-3.5
+              z-[5]
+
+              grid h-9 w-9
+              cursor-pointer
+              place-items-center
+
+              rounded-[11px]
+              border border-[#17152e]/10
+              bg-white/90
+
+              p-0
+              text-[18px]
+              leading-none
+              text-[#17152e]
+
+              shadow-[0_6px_18px_rgba(23,21,46,0.16)]
+              backdrop-blur-lg
+
+              transition-all
+              duration-200
+              ease-out
+
+              hover:rotate-90
+              hover:border-[#ff7457]
+              hover:bg-[#ff7457]
+              hover:text-white
+
+              motion-reduce:transition-none
+
+              ${focusStyles}
+            `}
         >
           ×
         </button>
@@ -161,16 +194,9 @@ const CountryDetail = ({ country, onClose }) => {
             value={country.capital || "Not available"}
           />
 
-          <CountryFact
-            label="Population"
-            value={population}
-            right
-          />
+          <CountryFact label="Population" value={population} right />
 
-          <CountryFact
-            label="Currency"
-            value={currencies || "Not available"}
-          />
+          <CountryFact label="Currency" value={currencies || "Not available"} />
 
           <CountryFact
             label="Languages"

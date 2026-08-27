@@ -1,5 +1,9 @@
-import { useEffect, useState } from "react";
-import { Pagination } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
+
+import useCountries from "../hooks/useCountries";
+
+import { fetchCountryByName } from "../services/countriesApi";
+
 import WorldMap from "./WorldMap";
 import CountryList from "./CountryList";
 import CountryDetail from "./CountryDetail";
@@ -9,78 +13,130 @@ import Footer from "./Footer";
 const countriesPerPage = 10;
 
 const Dashboard = () => {
-  const [countries, setCountries] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(true);
+  // Stores the current API page
 
-  const handleSearch = (searchInput) => {
-    const foundCountry = countries.find(
-      (country) =>
-        country.name.toLowerCase() === searchInput.trim().toLowerCase(),
-    );
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  // Stores the country shown in CountryDetail
+  const [searching, setSearching] = useState(false);
+  // Shows whether a search request is currently running
 
-    setSelectedCountry(foundCountry || null);
-  };
+  const [searchError, setSearchError] = useState("");
 
-  const handlePageChange = (_event, value) => {
-    setCurrentPage(value);
-  };
+  // search controller ref
+  const searchControllerRef = useRef(null);
+  // useRef used because changing it should not cause the component to render again
+
+  // calling the pagination hook
+  // Dashboard gives the hook Current page and Ten records per page
+  const { countries, pagination, loading, error, retry } = useCountries({
+    page: currentPage,
+    pageSize: countriesPerPage,
+  });
 
   useEffect(() => {
-    fetch("https://countries.dev/countries")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("API request failed");
-        }
-
-        return response.json();
-      })
-      .then((data) => {
-        const allCountries = data.map((country) => ({
-          alpha3Code: country.alpha3Code,
-          name: country.name,
-          capital: country.capital,
-          region: country.region,
-          flags: country.flags,
-          population: country.population,
-          currencies: country.currencies,
-          languages: country.languages,
-          borders: country.borders,
-        }));
-
-        setCountries(allCountries);
-      })
-      .catch((error) => {
-        console.error("API error:", error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    return () => {
+      searchControllerRef.current?.abort();
+      // when dashboard ie removed
+      // any running country search is cancelled
+    };
   }, []);
 
-  const firstCountryIndex = (currentPage - 1) * countriesPerPage;
+  // runs when user search in hero section
+  const handleSearch = async (searchInput) => {
+    // cancel previous search
+    searchControllerRef.current?.abort();
 
-  const paginatedCountries = countries.slice(
-    firstCountryIndex,
-    firstCountryIndex + countriesPerPage,
-  );
+    // new controller
+    // belongs to the latest search
+    const controller = new AbortController();
 
-  const totalPages = Math.ceil(countries.length / countriesPerPage);
+    searchControllerRef.current = controller;
+
+    setSearching(true);
+    setSearchError("");
+
+    try {
+      // request the country
+      const foundCountry = await fetchCountryByName(searchInput, {
+        signal: controller.signal,
+      });
+
+      // country not found
+      if (!foundCountry) {
+        setSelectedCountry(null);
+
+        setSearchError(`No country was found for "${searchInput}".`);
+
+        return;
+      }
+
+      setSelectedCountry(foundCountry);
+    } catch (requestError) {
+      if (requestError.name !== "AbortError") {
+        setSelectedCountry(null);
+
+        setSearchError(requestError.message);
+      }
+    } finally {
+      if (searchControllerRef.current === controller) {
+        setSearching(false);
+      }
+    }
+  };
+
+  const handleCountrySelect = (country) => {
+    searchControllerRef.current?.abort();
+    // cancels an active search and displays the clicked country
+
+    setSearching(false);
+    setSearchError("");
+    setSelectedCountry(country);
+  };
+
+  const changePage = (newPage) => {
+    // reject invalid pages
+    if (newPage < 1 || loading) {
+      return;
+    }
+
+    searchControllerRef.current?.abort();
+
+    // clear old selections
+    setSearching(false);
+    setSelectedCountry(null);
+    setSearchError("");
+    setCurrentPage(newPage);
+
+    // scroll back to country cards
+    document.getElementById("explore")?.scrollIntoView({
+      behavior: "smooth",
+    });
+  };
 
   return (
     <>
-      <HeroSection
-        onSearch={handleSearch}
-        countriesCount={countries.length}
-      />
+      <HeroSection onSearch={handleSearch} countriesCount={countries.length} />
 
       <main
         id="explore"
-        className="bg-[#f7f3eb] px-4 py-14 min-[581px]:px-6 min-[821px]:px-10 min-[821px]:py-20"
+        className="
+          bg-[#f7f3eb]
+          px-4 py-14
+          min-[581px]:px-6
+          min-[821px]:px-10
+          min-[821px]:py-20
+        "
       >
         <div className="mx-auto w-full max-w-[1400px]">
-          <header className="grid grid-cols-1 items-end gap-5 min-[821px]:grid-cols-[1.4fr_0.6fr] min-[821px]:gap-[60px]">
+          <header
+            className="
+              grid grid-cols-1
+              items-end gap-5
+              min-[821px]:grid-cols-[1.4fr_0.6fr]
+              min-[821px]:gap-[60px]
+            "
+          >
             <div>
               <div className="flex items-center gap-2.5 text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#847d72]">
                 <span className="h-px w-6 bg-current" />
@@ -89,64 +145,227 @@ const Dashboard = () => {
 
               <h2 className="mt-[15px] font-serif text-[45px] font-normal leading-[0.95] tracking-[-0.055em] min-[581px]:text-[clamp(44px,5vw,70px)]">
                 Find your next{" "}
-                <em className="font-normal text-[#ff7457]">
-                  fascination.
-                </em>
+                <em className="font-normal text-[#ff7457]">fascination.</em>
               </h2>
             </div>
 
             <p className="mb-[5px] max-w-[600px] text-[13px] leading-[1.8] text-[#6f6b7a] min-[821px]:max-w-[380px]">
-              Browse the globe at your own pace. Every country is a doorway
-              into a different culture, language and story.
+              Browse the globe at your own pace. Every country is a doorway into
+              a different culture, language and story.
             </p>
           </header>
 
-          <div className="mt-9 grid grid-cols-1 items-start gap-6 min-[581px]:mt-12 min-[1200px]:grid-cols-[minmax(0,1fr)_340px]">
-            <section
-              className="min-w-0"
-              aria-label="Country explorer"
-            >
-              <div className="mb-8 overflow-hidden rounded-2xl bg-[#17152e] p-2 shadow-[0_20px_50px_rgba(23,21,46,0.14)] min-[821px]:p-4">
+          <div
+            className="
+              mt-9 grid grid-cols-1
+              items-start gap-6
+              min-[581px]:mt-12
+              min-[1200px]:grid-cols-[minmax(0,1fr)_340px]
+            "
+          >
+            <section className="min-w-0" aria-label="Country explorer">
+              <div
+                className="
+                  mb-8
+                  overflow-hidden
+
+                  rounded-[26px]
+                  border-2
+                  border-[#17152e]/15
+
+                  bg-[#17152e]
+                  p-2.5
+
+                  shadow-[0_9px_0_rgba(23,21,46,0.07),0_24px_55px_rgba(23,21,46,0.14)]
+
+                  min-[821px]:p-3.5
+                "
+              >
                 <WorldMap />
               </div>
 
               <CountryList
-                countries={paginatedCountries}
-                onSelectCountry={setSelectedCountry}
+                countries={countries}
+                onSelectCountry={handleCountrySelect}
                 selectedCountryCode={selectedCountry?.alpha3Code}
                 loading={loading}
+                error={error}
+                onRetry={retry}
               />
 
-              {totalPages > 1 && (
-                <div className="mt-8 flex justify-center">
-                  <Pagination
-                    count={totalPages}
-                    page={currentPage}
-                    onChange={handlePageChange}
-                    shape="rounded"
+              {!error && (
+                <nav
+                  aria-label="Country pages"
+                  className="
+                        mx-auto mt-9
+                        flex max-w-[520px]
+                        items-center
+                        justify-between
+                        gap-3
+
+                        rounded-[18px]
+                        border-2
+                        border-[#17152e]/15
+
+                        bg-[#fffdf8]
+                        p-3
+
+                        shadow-[0_7px_0_rgba(23,21,46,0.06),0_18px_40px_rgba(23,21,46,0.08)]
+                      "
+                >
+                  <button
+                    type="button"
+                    disabled={loading || !pagination.hasPreviousPage}
+                    onClick={() => changePage(currentPage - 1)}
                     className="
-                      [&_.MuiPaginationItem-root]:!border
-                      [&_.MuiPaginationItem-root]:!border-[rgba(36,32,68,0.12)]
-                      [&_.MuiPaginationItem-root]:!bg-[#fffdf8]
-                      [&_.MuiPaginationItem-root]:!font-bold
-                      [&_.MuiPaginationItem-root]:!text-[#17152e]
-                      [&_.MuiPaginationItem-root:hover]:!bg-[rgba(36,32,68,0.08)]
-                      [&_.MuiPaginationItem-root.Mui-selected]:!bg-[#17152e]
-                      [&_.MuiPaginationItem-root.Mui-selected]:!text-white
-                      [&_.MuiPaginationItem-root.Mui-selected:hover]:!bg-[#242044]
-                    "
-                  />
-                </div>
+                    inline-flex
+                    min-w-[120px]
+                    items-center
+                    justify-center
+                    gap-2
+
+                    rounded-[11px]
+                    border border-[#17152e]/15
+                    bg-transparent
+
+                    px-4 py-3
+
+                    text-[10px]
+                    font-extrabold
+                    text-[#17152e]
+
+                    transition-all
+                    duration-200
+
+                    hover:border-[#17152e]
+                    hover:bg-[#17152e]
+                    hover:text-white
+
+                    disabled:cursor-not-allowed
+                    disabled:opacity-35
+                    disabled:hover:border-[#17152e]/15
+                    disabled:hover:bg-transparent
+                    disabled:hover:text-[#17152e]
+                  "
+                  >
+                    ← Previous
+                  </button>
+
+                  <span
+                    aria-live="polite"
+                    className="
+                        grid h-12
+                        min-w-[78px]
+                        place-items-center
+
+                        rounded-[11px]
+                        bg-[#17152e]/[0.05]
+
+                        px-3
+
+                        text-center
+                        text-[10px]
+                        font-extrabold
+                        text-[#6f6b7a]
+                      "
+                  >
+                    Page {pagination.page}
+                  </span>
+
+                  <button
+                    type="button"
+                    disabled={loading || !pagination.hasNextPage}
+                    onClick={() => changePage(currentPage + 1)}
+                    className="
+                    inline-flex
+                    min-w-[120px]
+                    items-center
+                    justify-center
+                    gap-2
+
+                    rounded-[11px]
+                    border border-[#ff7457]
+                    bg-[#ff7457]
+
+                    px-4 py-3
+
+                    text-[10px]
+                    font-extrabold
+                    text-white
+
+                    shadow-[0_7px_18px_rgba(255,116,87,0.20)]
+
+                    transition-all
+                    duration-200
+
+                    hover:-translate-y-0.5
+                    hover:border-[#17152e]
+                    hover:bg-[#17152e]
+
+                    disabled:cursor-not-allowed
+                    disabled:opacity-35
+                    disabled:hover:translate-y-0
+                    disabled:hover:border-[#ff7457]
+                    disabled:hover:bg-[#ff7457]
+                  "
+                  >
+                    Next →
+                  </button>
+                </nav>
               )}
             </section>
 
             <aside
               id="country-detail"
-              className="relative min-[1200px]:sticky min-[1200px]:top-5"
+              className="
+                relative
+                  scroll-mt-[96px]
+
+                  min-[1200px]:sticky
+                  min-[1200px]:top-[92px]
+                              "
             >
+              {searching && (
+                <p
+                  role="status"
+                  className="
+                    mb-3 rounded-[10px]
+                    bg-[#fffdf8]
+                    px-4 py-3
+                    text-xs
+                    font-bold
+                    text-[#6f6b7a]
+                  "
+                >
+                  Searching for country...
+                </p>
+              )}
+
+              {searchError && (
+                <p
+                  role="alert"
+                  className="
+                    mb-3 rounded-[10px]
+                    border
+                    border-[#ff7457]/30
+                    bg-[#fffdf8]
+                    px-4 py-3
+                    text-xs
+                    font-bold
+                    text-[#b14332]
+                  "
+                >
+                  {searchError}
+                </p>
+              )}
+
               <CountryDetail
                 country={selectedCountry}
-                onClose={() => setSelectedCountry(null)}
+                onClose={() => {
+                  setSelectedCountry(null);
+
+                  setSearchError("");
+                }}
               />
             </aside>
           </div>

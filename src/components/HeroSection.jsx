@@ -11,19 +11,21 @@ const HeroSection = ({ onSearch, countriesCount }) => {
   const totalCountries = countriesCount || 0;
 
   const scrollToExplorer = () => {
-    document
-      .getElementById("explore")
-      ?.scrollIntoView({ behavior: "smooth" });
+    document.getElementById("explore")?.scrollIntoView({ behavior: "smooth" });
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
+    // Prevents the form from refreshing the page
     const countryName = searchInput.trim();
+    // Removes unnecessary spaces
     if (!countryName) return;
+    //Stops if the input is empty
 
     onSearch(countryName);
+    // Sends the name to Dashboard
     scrollToExplorer();
+    // Scrolls to the explorer
   };
 
   const handleQuickPick = (country) => {
@@ -36,29 +38,41 @@ const HeroSection = ({ onSearch, countriesCount }) => {
     <section
       id="top"
       className="
-        relative z-[1] -mt-[76px] grid min-h-0 grid-cols-1
-        grid-rows-[1fr_auto] overflow-hidden bg-[#242044]
-        px-5 pb-[34px] pt-32 text-white
+                relative isolate grid
+                min-h-[650px]
+                grid-cols-1
+                overflow-hidden
+                bg-[#17152e]
+                px-5 py-16
+                text-white
 
-        before:absolute before:inset-0 before:content-['']
-        before:opacity-[0.12]
-        before:[background-image:linear-gradient(rgba(255,255,255,0.14)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.14)_1px,transparent_1px)]
-        before:[background-size:70px_70px]
-        before:[mask-image:linear-gradient(to_bottom,black,transparent_85%)]
-        before:[-webkit-mask-image:linear-gradient(to_bottom,black,transparent_85%)]
+                before:pointer-events-none
+                before:absolute
+                before:inset-0
+                before:z-0
+                before:content-['']
+                before:opacity-[0.13]
+                before:[background-image:linear-gradient(rgba(255,255,255,0.14)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.14)_1px,transparent_1px)]
+                before:[background-size:70px_70px]
+                before:[mask-image:linear-gradient(to_bottom,black,transparent_90%)]
 
-        after:absolute after:right-[-180px] after:top-[30px]
-        after:h-[620px] after:w-[620px] after:rounded-full
-        after:border after:border-white/[0.09] after:content-['']
-        after:shadow-[0_0_0_80px_rgba(255,255,255,0.018),0_0_0_160px_rgba(255,255,255,0.014)]
+                after:pointer-events-none
+                after:absolute
+                after:right-[-190px]
+                after:top-[-150px]
+                after:h-[570px]
+                after:w-[570px]
+                after:rounded-full
+                after:border
+                after:border-white/[0.08]
+                after:content-['']
+                after:shadow-[0_0_0_80px_rgba(255,255,255,0.018),0_0_0_160px_rgba(113,213,180,0.018)]
 
-        min-[581px]:px-[max(5vw,calc((100vw_-_1280px)/2))]
-        min-[581px]:pb-[46px] min-[581px]:pt-[135px]
-
-        min-[821px]:-mt-[86px] min-[821px]:min-h-[680px]
-        min-[821px]:grid-cols-[1.05fr_0.95fr]
-        min-[821px]:pt-40
-      "
+                min-[581px]:px-[max(5vw,calc((100vw_-_1280px)/2))]
+                min-[821px]:min-h-[680px]
+                min-[821px]:grid-cols-[1.05fr_0.95fr]
+                min-[821px]:py-20
+              "
     >
       <div className="relative z-[5] max-w-[650px] self-center pb-[35px] min-[821px]:max-w-[680px]">
         <div className="flex items-center gap-2.5 text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#71d5b4]">
@@ -68,18 +82,20 @@ const HeroSection = ({ onSearch, countriesCount }) => {
 
         <h1
           className="
-            my-6 font-[Georgia,'Times_New_Roman',serif]
-            text-[clamp(51px,16vw,74px)] font-normal
-            leading-[0.86] tracking-[-0.055em]
-            min-[581px]:mb-7 min-[581px]:text-[clamp(58px,6.8vw,102px)]
-          "
+                relative z-[2]
+                my-7
+                font-[Georgia,'Times_New_Roman',serif]
+                text-[clamp(56px,15vw,80px)]
+                font-normal
+                leading-[0.82]
+                tracking-[-0.06em]
+
+                min-[581px]:text-[clamp(64px,7vw,108px)]
+              "
         >
           Every country
           <br />
-          has a{" "}
-          <em className="font-normal text-[#ff7457]">
-            story.
-          </em>
+          has a <em className="font-normal text-[#ff7457]">story.</em>
         </h1>
 
         <p className="mb-[30px] max-w-[570px] text-sm leading-[1.75] text-white/[0.62] min-[581px]:text-[15px]">
@@ -90,11 +106,25 @@ const HeroSection = ({ onSearch, countriesCount }) => {
         <form
           onSubmit={handleSubmit}
           className="
-            flex h-[58px] w-[min(100%,585px)] items-center
-            rounded-[15px] bg-white py-[7px] pl-[18px] pr-[7px]
-            shadow-[0_18px_55px_rgba(0,0,0,0.2)]
-            min-[581px]:h-[62px]
-          "
+                relative z-[2]
+                flex min-h-[62px]
+                w-[min(100%,600px)]
+                items-center
+
+                rounded-[18px]
+                border border-white/10
+                bg-white
+                p-2 pl-[18px]
+
+                shadow-[0_24px_70px_rgba(0,0,0,0.3)]
+
+                transition-shadow
+                duration-300
+
+                focus-within:shadow-[0_24px_75px_rgba(0,0,0,0.38),0_0_0_4px_rgba(113,213,180,0.15)]
+
+                motion-reduce:transition-none
+              "
         >
           <span
             aria-hidden="true"
@@ -292,12 +322,10 @@ const HeroSection = ({ onSearch, countriesCount }) => {
           <span className="h-[9px] w-[9px] shrink-0 rounded-full bg-[#71d5b4] shadow-[0_0_0_6px_rgba(113,213,180,0.18)]" />
 
           <span className="flex flex-col">
-            <strong className="font-sans text-[17px]">
-              {totalCountries}
-            </strong>
+            <strong className="font-sans text-[17px]">{totalCountries}</strong>
 
             <small className="text-[8px] uppercase tracking-[0.1em] text-[#888390]">
-              countries ready
+              countries on this page
             </small>
           </span>
         </div>
@@ -312,7 +340,7 @@ const HeroSection = ({ onSearch, countriesCount }) => {
           min-[821px]:mt-0
         "
       >
-        <HeroStat value={totalCountries} label="Countries" />
+        <HeroStat value={totalCountries} label="On this page" />
         <HeroStat value="7" label="Continents" />
         <HeroStat value="6.5K+" label="Languages" />
       </div>
