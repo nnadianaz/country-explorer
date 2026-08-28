@@ -10,11 +10,17 @@ import CountryDetail from "./CountryDetail";
 import HeroSection from "./HeroSection";
 import Footer from "./Footer";
 
-const countriesPerPage = 10;
+// for display 10 countries per page
+// const countriesPerPage = 10;
 
 const Dashboard = () => {
+  // for page size selector / 10, 20, 30 countries per page
+  const [countriesPerPage, setCountriesPerPage] = useState(10);
+
   const [currentPage, setCurrentPage] = useState(1);
   // Stores the current API page
+
+  const [sortOrder, setSortOrder] = useState("asc");
 
   const [selectedCountry, setSelectedCountry] = useState(null);
   // Stores the country shown in CountryDetail
@@ -32,6 +38,7 @@ const Dashboard = () => {
   const { countries, pagination, loading, error, retry } = useCountries({
     page: currentPage,
     pageSize: countriesPerPage,
+    sortOrder,
   });
 
   useEffect(() => {
@@ -92,6 +99,30 @@ const Dashboard = () => {
     setSearching(false);
     setSearchError("");
     setSelectedCountry(country);
+  };
+
+  const handlePageSizeChange = (event) => {
+    const newPageSize = Number(event.target.value);
+    // event.target.value gets the selected option
+
+    setCountriesPerPage(newPageSize);
+    // change page size
+    setCurrentPage(1);
+    setSelectedCountry(null);
+    // clears previously selected country
+    setSearchError("");
+  };
+
+  const handlesortOrderChange = (event) => {
+    const newSortOrder = event.target.value;
+
+    searchControllerRef.current?.abort();
+
+    setSearching(false);
+    setSortOrder(newSortOrder);
+    setCurrentPage(1);
+    setSelectedCountry(null);
+    setSearchError("");
   };
 
   const changePage = (newPage) => {
@@ -198,9 +229,12 @@ const Dashboard = () => {
                   aria-label="Country pages"
                   className="
                         mx-auto mt-9
-                        flex max-w-[520px]
+
+                        flex w-full
+                        max-w-[920px]
+                        flex-wrap
                         items-center
-                        justify-between
+                        justify-center
                         gap-3
 
                         rounded-[18px]
@@ -211,8 +245,117 @@ const Dashboard = () => {
                         p-3
 
                         shadow-[0_7px_0_rgba(23,21,46,0.06),0_18px_40px_rgba(23,21,46,0.08)]
+
+                        min-[760px]:justify-between
                       "
                 >
+                  <label
+                    htmlFor="page-size"
+                    className="
+                            inline-flex
+                            items-center
+                            gap-2
+
+                            text-[10px]
+                            font-bold
+                            uppercase
+                            tracking-[0.1em]
+                            text-[#6f6b7a]
+                          "
+                  >
+                    Show
+                    <select
+                      id="page-size"
+                      value={countriesPerPage}
+                      onChange={handlePageSizeChange}
+                      disabled={loading}
+                      className="
+                              cursor-pointer
+                              rounded-full
+
+                              border-2
+                              border-[#17152e]/15
+                              bg-[#fffdf8]
+
+                              px-3 py-2
+
+                              text-[11px]
+                              font-bold
+                              text-[#17152e]
+
+                              outline-none
+
+                              transition-colors
+
+                              hover:border-[#ff7457]
+
+                              focus:border-[#ff7457]
+                              focus:ring-4
+                              focus:ring-[#ff7457]/15
+
+                              disabled:cursor-not-allowed
+                              disabled:opacity-50
+                            "
+                    >
+                      <option value={10}>10 per page</option>
+                      <option value={20}>20 per page</option>
+                      <option value={30}>30 per page</option>
+                    </select>
+                  </label>
+
+                  <label
+                    htmlFor="sort-order"
+                    className="
+                            inline-flex
+                            items-center
+                            gap-2
+
+                            text-[10px]
+                            font-bold
+                            uppercase
+                            tracking-[0.1em]
+                            text-[#6f6b7a]
+                          "
+                  >
+                    Sort
+                    <select
+                      id="sort-order"
+                      value={sortOrder}
+                      onChange={handlesortOrderChange}
+                      disabled={loading}
+                      className="
+                              cursor-pointer
+                              rounded-full
+
+                              border-2
+                              border-[#17152e]/15
+                              bg-[#fffdf8]
+
+                              px-3 py-2
+
+                              text-[11px]
+                              font-bold
+                              text-[#17152e]
+
+                              outline-none
+
+                              transition-colors
+
+                              hover:border-[#ff7457]
+
+                              focus:border-[#ff7457]
+                              focus:ring-4
+                              focus:ring-[#ff7457]/15
+
+                              disabled:cursor-not-allowed
+                              disabled:opacity-50
+                            "
+                    >
+                      <option value="asc">Name: A–Z</option>
+                      <option value="desc">Name: Z–A</option>
+                    </select>
+                  </label>
+
                   <button
                     type="button"
                     disabled={loading || !pagination.hasPreviousPage}
