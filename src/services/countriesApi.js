@@ -1,5 +1,6 @@
 const COUNTRIES_API_BASE_URL = "https://countries.dev";
 
+// array contains the country fields
 const COUNTRY_FIELDS = [
   "alpha3Code",
   "name",
@@ -46,6 +47,7 @@ const getFlags = (country) => {
   return {};
 };
 
+// converts every raw API country into the exact structure your React components expect
 const normalizeCountry = (country) => ({
   alpha3Code: country.alpha3Code || country.cca3 || "",
 
@@ -86,6 +88,7 @@ const getPositiveInteger = (value, fallback) => {
 // custom API error
 // stores: error message, name, HTTP status
 export class CountriesApiError extends Error {
+  // extends Error extends JavaScript’s normal Error class
   constructor(message, status = null) {
     super(message);
 
@@ -132,14 +135,18 @@ const requestJson = async (url, { signal, allowNotFound = false } = {}) => {
   }
 };
 
+// function responsible for API-level pagination
 export const fetchCountriesPage = async ({
   page = 1,
   pageSize = 10,
+  sortOrder = "asc",
   signal,
 } = {}) => {
   const safePage = getPositiveInteger(page, 1);
 
   const safePageSize = Math.min(getPositiveInteger(pageSize, 10), 100);
+
+  const safeSorttOrder = sortOrder === "desc" ? "desc" : "asc";
 
   const offset = (safePage - 1) * safePageSize;
   // offset tells the Api how many records to skip
@@ -162,7 +169,7 @@ export const fetchCountriesPage = async ({
   url.searchParams.set("offset", String(offset));
 
   url.searchParams.set("sort", "name");
-  url.searchParams.set("order", "asc");
+  url.searchParams.set("order", safeSorttOrder);
 
   url.searchParams.set("fields", COUNTRY_FIELDS);
 
@@ -196,6 +203,8 @@ export const fetchCountriesPage = async ({
   };
 };
 
+// fetch country by name
+// import into useCountries
 export const fetchCountryByName = async (countryName, { signal } = {}) => {
   const cleanName = countryName.trim();
 
@@ -205,11 +214,14 @@ export const fetchCountryByName = async (countryName, { signal } = {}) => {
 
   const url = new URL(
     `/name/${encodeURIComponent(cleanName)}`,
+    // encodeURIComponent() safely prepares the name for use inside a URL.
+    // https://countries.dev/name/Pakistan
     COUNTRIES_API_BASE_URL,
   );
-
+  // search request asks for the same country information used by your components
   url.searchParams.set("fields", COUNTRY_FIELDS);
 
+  // sending the search request
   const data = await requestJson(url, {
     signal,
     allowNotFound: true,
@@ -219,8 +231,10 @@ export const fetchCountryByName = async (countryName, { signal } = {}) => {
     return null;
   }
 
+  // converting result into array
   const countries = Array.isArray(data) ? data : [data];
 
+  // .find() searches for a country whose name exactly matches the user’s search
   const exactCountry =
     countries.find(
       (country) =>
