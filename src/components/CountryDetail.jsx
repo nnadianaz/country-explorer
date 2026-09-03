@@ -1,3 +1,5 @@
+import FavoriteButton from "./FavoriteButton";
+
 const makeArray = (value) => {
   if (Array.isArray(value)) return value;
 
@@ -105,22 +107,32 @@ const CountryDetail = ({ country, onClose }) => {
     >
       <div
         className="
-          relative grid h-[220px] min-h-0
+          relative grid h-[175px] min-h-0
           place-items-center overflow-hidden
           bg-[linear-gradient(145deg,#efe9df,#fff)]
 
           after:absolute after:inset-0 after:content-['']
           after:shadow-[inset_0_-40px_50px_rgba(23,21,46,0.2)]
 
-          min-[581px]:h-full min-[581px]:min-h-[390px]
-          min-[821px]:h-[205px] min-[821px]:min-h-0
+          min-[581px]:h-full min-[581px]:min-h-[360px]
+          min-[821px]:h-[175px] min-[821px]:min-h-0
         "
       >
         {flag ? (
           <img
             src={flag}
             alt={`${country.name} flag`}
-            className="h-full w-full object-cover"
+            className="
+              relative z-[2]
+              block
+              h-auto
+              w-auto
+              max-h-[145px]
+              max-w-[90%]
+              object-contain
+
+              drop-shadow-[0_12px_18px_rgba(23,21,46,0.18)]
+            "
           />
         ) : (
           <span aria-hidden="true" className="text-[5rem]">
@@ -171,14 +183,14 @@ const CountryDetail = ({ country, onClose }) => {
         </button>
       </div>
 
-      <div className="p-[23px]">
+      <div className="p-5">
         <div className="flex items-start justify-between gap-4">
           <div>
             <span className="text-[8px] font-extrabold uppercase tracking-[0.14em] text-[#71d5b4]">
               {country.region || "Country profile"}
             </span>
 
-            <h3 className="mb-5 mt-[5px] font-[Georgia,serif] text-[34px] font-normal leading-none">
+            <h3 className="mb-3 mt-[5px] font-[Georgia,serif] text-[32px] font-normal leading-none">
               {country.name}
             </h3>
           </div>
@@ -205,7 +217,7 @@ const CountryDetail = ({ country, onClose }) => {
           />
         </div>
 
-        <div className="pb-5 pt-[17px]">
+        <div className="pb-4 pt-3">
           <span className="mb-1.5 block text-[8px] uppercase tracking-[0.13em] text-white/[0.42]">
             Neighbouring countries
           </span>
@@ -231,6 +243,7 @@ const CountryDetail = ({ country, onClose }) => {
             )}
           </div>
         </div>
+        <FavoriteButton country={country} />
 
         <button
           type="button"
@@ -257,7 +270,7 @@ const CountryFact = ({ label, value, right = false }) => (
   <div
     className={`
       min-w-0 border-b border-white/[0.11]
-      pb-3.5 pr-2 pt-4
+     pb-3 pr-2 pt-3
       ${right ? "border-l border-white/[0.11] pl-3.5" : ""}
     `}
   >

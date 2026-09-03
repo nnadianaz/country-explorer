@@ -9,6 +9,7 @@ import CountryList from "./CountryList";
 import CountryDetail from "./CountryDetail";
 import HeroSection from "./HeroSection";
 import Footer from "./Footer";
+import FavoritesCounter from "./FavoritesCounter";
 
 // for display 10 countries per page
 // const countriesPerPage = 10;
@@ -40,6 +41,15 @@ const Dashboard = () => {
     pageSize: countriesPerPage,
     sortOrder,
   });
+
+  const scrollToCountryDetail = () => {
+    window.requestAnimationFrame(() => {
+      document.getElementById("country-detail")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+  };
 
   useEffect(() => {
     return () => {
@@ -79,6 +89,7 @@ const Dashboard = () => {
       }
 
       setSelectedCountry(foundCountry);
+      scrollToCountryDetail();
     } catch (requestError) {
       if (requestError.name !== "AbortError") {
         setSelectedCountry(null);
@@ -94,11 +105,16 @@ const Dashboard = () => {
 
   const handleCountrySelect = (country) => {
     searchControllerRef.current?.abort();
-    // cancels an active search and displays the clicked country
 
     setSearching(false);
     setSearchError("");
     setSelectedCountry(country);
+
+    const isSmallScreen = window.matchMedia("(max-width: 820px)").matches;
+
+    if (isSmallScreen) {
+      scrollToCountryDetail();
+    }
   };
 
   const handlePageSizeChange = (event) => {
@@ -213,6 +229,10 @@ const Dashboard = () => {
                 "
               >
                 <WorldMap />
+              </div>
+
+              <div className="mb-5 flex justify-end">
+                <FavoritesCounter />
               </div>
 
               <CountryList
