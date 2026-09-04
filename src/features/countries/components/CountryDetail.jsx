@@ -1,4 +1,4 @@
-import FavoriteButton from "./FavoriteButton";
+import FavoriteButton from "../../../features/favorites/components/FavoriteButton";
 
 const makeArray = (value) => {
   if (Array.isArray(value)) return value;

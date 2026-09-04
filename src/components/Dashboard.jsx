@@ -1,15 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 
-import useCountries from "../hooks/useCountries";
+import useCountries from "../features/countries/hooks/useCountries";
 
-import { fetchCountryByName } from "../services/countriesApi";
+import { fetchCountryByName } from "../features/countries/services/countriesApi";
 
 import WorldMap from "./WorldMap";
-import CountryList from "./CountryList";
-import CountryDetail from "./CountryDetail";
+import CountryList from "../features/countries/components/CountryList";
+import CountryDetail from "../features/countries/components/CountryDetail";
 import HeroSection from "./HeroSection";
 import Footer from "./Footer";
-import FavoritesCounter from "./FavoritesCounter";
+import FavoritesCounter from "../features/favorites/components/FavoritesCounter";
+import { Link } from "react-router-dom";
 
 // for display 10 countries per page
 // const countriesPerPage = 10;
@@ -231,17 +232,52 @@ const Dashboard = () => {
                 <WorldMap />
               </div>
 
-              <div className="mb-5 flex justify-end">
+              <div
+                className="
+                  mb-5 flex flex-wrap
+                  items-center justify-between gap-3
+                "
+              >
+                <Link
+                  to="/plans/new"
+                  className="
+                    inline-flex items-center gap-2
+                    rounded-full border-2
+                    border-[#17152e]/15
+                    bg-[#fffdf8] px-5 py-3
+
+                    text-[10px] font-black
+                    uppercase tracking-[0.1em]
+                    text-[#17152e] no-underline
+
+                    shadow-[0_5px_0_rgba(23,21,46,0.08)]
+
+                    transition-all duration-200
+
+                    hover:-translate-y-0.5
+                    hover:border-[#ff7457]
+                    hover:bg-[#ff7457]
+                    hover:text-white
+
+                    motion-reduce:transition-none
+                  "
+                >
+                  Create travel plan
+                  <span aria-hidden="true">↗</span>
+                </Link>
+
                 <FavoritesCounter />
               </div>
 
               <CountryList
                 countries={countries}
-                onSelectCountry={handleCountrySelect}
-                selectedCountryCode={selectedCountry?.alpha3Code}
                 loading={loading}
                 error={error}
                 onRetry={retry}
+                onSelectCountry={handleCountrySelect}
+                selectedCountryCode={
+                  selectedCountry?.alpha3Code
+                }
               />
 
               {!error && (
