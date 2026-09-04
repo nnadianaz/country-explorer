@@ -1,4 +1,4 @@
-import CountryCard from "./CountryCard";
+import CountryCard from "../components/CountryCard";
 
 const stateStyles = `
               relative

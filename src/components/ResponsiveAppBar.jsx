@@ -1,17 +1,18 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const pages = [
   {
     name: "Explore",
-    link: "#explore",
+    link: "/#explore",
   },
   {
     name: "World Map",
-    link: "#world",
+    link: "/#world",
   },
   {
     name: "Discover",
-    link: "#country-detail",
+    link: "/#country-detail",
   },
 ];
 
@@ -51,14 +52,6 @@ const ResponsiveAppBar = () => {
     setMobileMenuOpen(false);
   };
 
-  const handleExplore = () => {
-    document.getElementById("explore")?.scrollIntoView({
-      behavior: "smooth",
-    });
-
-    closeMobileMenu();
-  };
-
   return (
     <header
       className="
@@ -80,9 +73,8 @@ const ResponsiveAppBar = () => {
           min-[1100px]:px-12
         "
       >
-        {/* Logo */}
-        <a
-          href="#top"
+        <Link
+          to="/"
           aria-label="Atlas home"
           className="
             group inline-flex
@@ -132,7 +124,7 @@ const ResponsiveAppBar = () => {
               Country Explorer
             </small>
           </span>
-        </a>
+        </Link>
 
         {/* Navigation */}
         <nav
@@ -192,50 +184,73 @@ const ResponsiveAppBar = () => {
               {page.name}
             </a>
           ))}
+          <Link
+              to="/plans/new"
+              onClick={closeMobileMenu}
+              className="
+                mt-2 inline-flex items-center
+                justify-between rounded-xl
+                bg-[#ff7457] px-4 py-3
+
+                text-[11px] font-black
+                uppercase tracking-[0.1em]
+                text-white no-underline
+
+                transition-colors duration-200
+                hover:bg-white
+                hover:text-[#17152e]
+
+                motion-reduce:transition-none
+                min-[760px]:hidden
+              "
+            >
+              Plan a trip
+              <span aria-hidden="true">↗</span>
+            </Link>
         </nav>
 
-        {/* Desktop explore button */}
-        <button
-          type="button"
-          onClick={handleExplore}
-          className="
-            hidden
-            items-center gap-2
-            rounded-full
-            border border-white/20
-            bg-white/[0.06]
-            px-4 py-2.5
+        {/* Desktop travel-plan button */}
+            <Link
+              to="/plans/new"
+              className="
+                hidden
+                items-center gap-2
+                rounded-full
+                border border-[#ff7457]/60
+                bg-[#ff7457]
+                px-4 py-2.5
 
-            text-[10px]
-            font-extrabold
-            uppercase
-            tracking-[0.08em]
-            text-white
+                text-[10px]
+                font-extrabold
+                uppercase
+                tracking-[0.08em]
+                text-white
+                no-underline
 
-            transition
-            duration-200
+                shadow-[0_5px_18px_rgba(255,116,87,0.22)]
 
-            hover:-translate-y-0.5
-            hover:border-[#71d5b4]/50
-            hover:bg-white
-            hover:text-[#17152e]
+                transition-all
+                duration-200
 
-            motion-reduce:transition-none
+                hover:-translate-y-0.5
+                hover:border-white
+                hover:bg-white
+                hover:text-[#17152e]
 
-            min-[760px]:inline-flex
-          "
-        >
-          Start exploring
-          <span
-            aria-hidden="true"
-            className="
-              text-[15px]
-              text-[#ff7457]
-            "
-          >
-            ↗
-          </span>
-        </button>
+                motion-reduce:transition-none
+
+                min-[760px]:inline-flex
+              "
+            >
+              Plan a trip
+
+              <span
+                aria-hidden="true"
+                className="text-[15px]"
+              >
+                ↗
+              </span>
+            </Link>
 
         {/* Mobile menu button */}
         <button

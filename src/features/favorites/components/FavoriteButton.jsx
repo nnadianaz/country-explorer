@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   selectIsFavorite,
   toggleFavorite,
-} from "../features/favorites/favoritesSlice";
+} from "../favoritesSlice";
 
 const focusStyles = `
   focus-visible:outline
