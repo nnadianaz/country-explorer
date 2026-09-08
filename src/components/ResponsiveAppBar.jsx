@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectFavoriteCount } from "../features/favorites/favoritesSlice";
 
 const pages = [
   {
@@ -47,6 +49,7 @@ const CompassIcon = () => {
 
 const ResponsiveAppBar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const favoriteCount = useSelector(selectFavoriteCount);
 
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
@@ -145,7 +148,8 @@ const ResponsiveAppBar = () => {
             min-[760px]:static
             min-[760px]:flex
             min-[760px]:items-center
-            min-[760px]:gap-8
+            min-[760px]:gap-4
+            min-[1000px]:gap-8
             min-[760px]:border-0
             min-[760px]:bg-transparent
             min-[760px]:p-0
@@ -184,10 +188,62 @@ const ResponsiveAppBar = () => {
               {page.name}
             </a>
           ))}
+
           <Link
-              to="/plans/new"
-              onClick={closeMobileMenu}
+            to="/favorites"
+            onClick={closeMobileMenu}
+            aria-label={`View ${favoriteCount} favourite ${
+              favoriteCount === 1 ? "country" : "countries"
+            }`}
+            className="
+                flex items-center
+                justify-between gap-2
+                rounded-lg
+                px-3 py-3
+
+                text-[11px]
+                font-bold
+                uppercase
+                tracking-[0.12em]
+                text-white/[0.58]
+                no-underline
+
+                transition-colors
+                duration-200
+
+                hover:bg-white/5
+                hover:text-white
+
+                motion-reduce:transition-none
+
+                min-[760px]:inline-flex
+                min-[760px]:px-0
+                min-[760px]:py-1
+                min-[760px]:hover:bg-transparent
+              "
+          >
+            <span>Favourites</span>
+
+            <span
+              aria-live="polite"
               className="
+                  grid min-h-5 min-w-5
+                  place-items-center
+                  rounded-full
+                  bg-[#f0c76c]
+                  px-1.5
+                  text-[9px]
+                  text-[#17152e]
+                "
+            >
+              {favoriteCount}
+            </span>
+          </Link>
+
+          <Link
+            to="/plans/new"
+            onClick={closeMobileMenu}
+            className="
                 mt-2 inline-flex items-center
                 justify-between rounded-xl
                 bg-[#ff7457] px-4 py-3
@@ -203,16 +259,16 @@ const ResponsiveAppBar = () => {
                 motion-reduce:transition-none
                 min-[760px]:hidden
               "
-            >
-              Plan a trip
-              <span aria-hidden="true">↗</span>
-            </Link>
+          >
+            Plan a trip
+            <span aria-hidden="true">↗</span>
+          </Link>
         </nav>
 
         {/* Desktop travel-plan button */}
-            <Link
-              to="/plans/new"
-              className="
+        <Link
+          to="/plans/new"
+          className="
                 hidden
                 items-center gap-2
                 rounded-full
@@ -241,16 +297,12 @@ const ResponsiveAppBar = () => {
 
                 min-[760px]:inline-flex
               "
-            >
-              Plan a trip
-
-              <span
-                aria-hidden="true"
-                className="text-[15px]"
-              >
-                ↗
-              </span>
-            </Link>
+        >
+          Plan a trip
+          <span aria-hidden="true" className="text-[15px]">
+            ↗
+          </span>
+        </Link>
 
         {/* Mobile menu button */}
         <button
