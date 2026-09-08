@@ -3,6 +3,7 @@ import ResponsiveAppBar from "./components/ResponsiveAppBar";
 import { Route, Routes } from "react-router-dom";
 import CreateTravelPlanPage from "./pages/CreateTravelPlanPage";
 import FavoritesPage from "./pages/FavoritesPage";
+import CountryDetailsPage from "./pages/CountryDetailsPage";
 
 function App() {
   return (
@@ -15,6 +16,11 @@ function App() {
         <Route path="/plans/new" element={<CreateTravelPlanPage />} />
 
         <Route path="/favorites" element={<FavoritesPage />} />
+
+        <Route
+          path="/countries/:countryCode"
+          element={<CountryDetailsPage />}
+        />
       </Routes>
     </>
   );
