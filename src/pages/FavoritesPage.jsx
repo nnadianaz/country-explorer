@@ -322,6 +322,39 @@ const FavoritesPage = () => {
                       country={country}
                       favoriteLabel="Remove from favorites"
                     />
+                    <Link
+                      to={`/countries/${encodeURIComponent(
+                        country.alpha3Code,
+                      )}`}
+                      aria-label={`View full profile for ${country.name}`}
+                      className="
+    mb-2.5 flex w-full
+    items-center justify-between
+
+    rounded-[10px]
+    border border-[#17152e]
+    bg-[#17152e]
+    px-4 py-3
+
+    text-[10px]
+    font-extrabold
+    uppercase
+    tracking-[0.08em]
+    text-white
+    no-underline
+
+    transition duration-200
+    hover:-translate-y-0.5
+    hover:border-[#ff7457]
+    hover:bg-[#ff7457]
+
+    motion-reduce:transition-none
+  "
+                    >
+                      <span>View full profile</span>
+
+                      <span aria-hidden="true">↗</span>
+                    </Link>
                   </div>
                 </article>
               );

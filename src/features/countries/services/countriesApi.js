@@ -203,6 +203,42 @@ export const fetchCountriesPage = async ({
   };
 };
 
+export const fetchCountryByCode = async (
+  countryCode,
+  { signal } = {},
+  // signal support AbortController allow to cancel an updated request
+) => {
+  const cleanCode = String(countryCode || "")
+    .trim()
+    .toUpperCase();
+
+  if (!cleanCode) {
+    return null;
+  }
+
+  // construct the URL
+  const url = new URL(
+    `/alpha/${encodeURIComponent(cleanCode)}`,
+    // encodeURIComponent() safely prepares the route value for use inside a URL
+    COUNTRIES_API_BASE_URL,
+  );
+
+  // add existing fields
+  url.searchParams.set("fields", COUNTRY_FIELDS);
+
+  // reuse existing requestJSON() function
+  const data = await requestJson(url, {
+    signal,
+    allowNotFound: true,
+  });
+
+  if (!data) {
+    return null;
+  }
+
+  return normalizeCountry(data);
+};
+
 // fetch country by name
 // import into useCountries
 export const fetchCountryByName = async (countryName, { signal } = {}) => {

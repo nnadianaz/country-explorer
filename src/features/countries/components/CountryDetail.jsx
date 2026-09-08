@@ -1,5 +1,5 @@
 import FavoriteButton from "../../../features/favorites/components/FavoriteButton";
-
+import { Link } from "react-router-dom";
 const makeArray = (value) => {
   if (Array.isArray(value)) return value;
 
@@ -41,7 +41,7 @@ const focusStyles = `
   focus-visible:outline-offset-[3px]
 `;
 
-const CountryDetail = ({ country, onClose }) => {
+const CountryDetail = ({ country, onClose, onDiscoverAnother }) => {
   if (!country) {
     return (
       <div
@@ -92,7 +92,14 @@ const CountryDetail = ({ country, onClose }) => {
     : "Not available";
 
   const handleDiscoverAnother = () => {
-    document.getElementById("top")?.scrollIntoView({ behavior: "smooth" });
+    if (onDiscoverAnother) {
+      onDiscoverAnother();
+      return;
+    }
+
+    document.getElementById("top")?.scrollIntoView({
+      behavior: "smooth",
+    });
   };
 
   return (
@@ -243,6 +250,44 @@ const CountryDetail = ({ country, onClose }) => {
             )}
           </div>
         </div>
+
+        <Link
+          to={`/countries/${encodeURIComponent(country.alpha3Code)}`}
+          className={`
+    mb-4 inline-flex
+    items-center gap-2
+
+    rounded-full
+    border border-white/[0.16]
+    bg-white/[0.05]
+    px-3.5 py-2.5
+
+    text-[9px]
+    font-extrabold
+    uppercase
+    tracking-[0.1em]
+    text-[#71d5b4]
+    no-underline
+
+    transition
+    duration-200
+    ease-out
+
+    hover:-translate-y-0.5
+    hover:border-[#71d5b4]
+    hover:bg-[#71d5b4]
+    hover:text-[#17152e]
+
+    motion-reduce:transition-none
+
+    ${focusStyles}
+  `}
+        >
+          <span>View full profile</span>
+
+          <span aria-hidden="true">↗</span>
+        </Link>
+
         <FavoriteButton country={country} />
 
         <button
