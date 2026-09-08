@@ -1,41 +1,56 @@
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+
+import { selectFavoriteCount } from "../favoritesSlice";
 
 const FavoritesCounter = () => {
-  // Read the favorites array from Redux
-  const favoriteCountries = useSelector((state) => state.favorites.items);
-
-  // Count the countries
-  const favoriteCount = favoriteCountries.length;
+  const favoriteCount = useSelector(selectFavoriteCount);
 
   const label = favoriteCount === 1 ? "favourite" : "favourites";
 
   return (
-    <div
-      aria-live="polite"
-      aria-atomic="true"
+    <Link
+      to="/favorites"
+      aria-label={`View ${favoriteCount} ${label}`}
       className="
         inline-flex
         items-center
         gap-2
         rounded-full
-        border border-[#17152e]/15
+        border
+        border-[#17152e]/15
         bg-[#fffdf8]
         px-4 py-2
+
         text-[10px]
         font-extrabold
         uppercase
         tracking-[0.08em]
         text-[#17152e]
+        no-underline
+
         shadow-sm
+        transition-all
+        duration-200
+
+        hover:-translate-y-0.5
+        hover:border-[#f0c76c]
+        hover:bg-[#f0c76c]
+
+        focus-visible:outline
+        focus-visible:outline-[3px]
+        focus-visible:outline-[#ff7457]/40
+        focus-visible:outline-offset-[3px]
       "
     >
       <span aria-hidden="true" className="text-base text-[#f0c76c]">
         ★
       </span>
 
-      <span>{favoriteCount}</span>
+      <span aria-live="polite">{favoriteCount}</span>
+
       <span>{label}</span>
-    </div>
+    </Link>
   );
 };
 

@@ -1,9 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 
-import {
-  selectIsFavorite,
-  toggleFavorite,
-} from "../favoritesSlice";
+import { selectIsFavorite, toggleFavorite } from "../favoritesSlice";
 
 const focusStyles = `
   focus-visible:outline
@@ -12,7 +9,10 @@ const focusStyles = `
   focus-visible:outline-offset-[3px]
 `;
 
-const FavoriteButton = ({ country }) => {
+const FavoriteButton = ({
+  country,
+  favoriteLabel = "Remove from favorites",
+}) => {
   // Dispatch sends an action to Redux
   const dispatch = useDispatch();
 
@@ -76,7 +76,7 @@ const FavoriteButton = ({ country }) => {
         ${focusStyles}
       `}
     >
-      <span>{isFavorite ? "Saved to favourites" : "Add to favourites"}</span>
+      <span>{isFavorite ? favoriteLabel : "Add to favourites"}</span>
 
       <span aria-hidden="true">{isFavorite ? "★" : "☆"}</span>
     </button>
